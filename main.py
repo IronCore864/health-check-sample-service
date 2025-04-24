@@ -18,6 +18,7 @@ def health_check():
     global healthy, first_check
 
     if not healthy:
+        app.logger.warning("Service unhealthy")
         return "Health check failed", 500
 
     if not first_check:
@@ -26,6 +27,7 @@ def health_check():
 
     if random.randint(0, 9) < 2:  # 20% chance of failure
         healthy = False
+        app.logger.warning("Service unhealthy")
         return "Health check failed", 500
 
     return "Health check passed", 200
