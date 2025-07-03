@@ -5,7 +5,7 @@ from flask import Flask
 app = Flask(__name__)
 
 healthy = True
-first_check = False
+done_first_check = False
 
 
 @app.route("/")
@@ -15,17 +15,19 @@ def home_page():
 
 @app.route("/health")
 def health_check():
-    global healthy, first_check
+    global healthy, done_first_check
 
     if not healthy:
+        app.logger.warning("Service unhealthy")
         return "Health check failed", 500
 
-    if not first_check:
-        first_check = True
+    if not done_first_check:
+        done_first_check = True
         return "Health check passed", 200
 
     if random.randint(0, 9) < 2:  # 20% chance of failure
         healthy = False
+        app.logger.warning("Service unhealthy")
         return "Health check failed", 500
 
     return "Health check passed", 200
